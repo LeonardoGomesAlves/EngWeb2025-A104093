@@ -1,0 +1,77 @@
+{
+    "reparacoes": [
+        {
+            "nome": "Dálio Pardal",
+            "nif": 8210436,
+            "data": "2021-12-04",
+            "viatura": {
+                "marca": "Lada",
+                "modelo": "YV 198",
+                "matricula": "10-EB-81"
+            },
+            "nr_intervencoes": 1,
+            "intervencoes": [
+                {
+                    "codigo": "R024",
+                    "nome": "Serviço de transmissão",
+                    "descricao": "Substituição do fluido da transmissão, ajuste ou reparação de componentes da transmissão."
+                }
+            ]
+        },
+        {
+            "nome": "Severiano Coxo",
+            "nif": 278769219,
+            "data": "2019-09-28",
+            "viatura": {
+                "marca": "Aston Martin",
+                "modelo": "SP 113",
+                "matricula": "13-GR-92"
+            },
+            "nr_intervencoes": 4,
+            "intervencoes": [
+                {
+                    "codigo": "R024",
+                    "nome": "Substituição de pastilhas de freio",
+                    "descricao": "Troca das pastilhas de freio desgastadas por novas."
+                },
+                {
+                    "codigo": "R010",
+                    "nome": "Ajuste do sistema de freios",
+                    "descricao": "Ajuste dos componentes do sistema de freios para garantir um funcionamento adequado."
+                },
+                {
+                    "codigo": "R011",
+                    "nome": "Substituição de bateria",
+                    "descricao": "Instalação de uma nova bateria quando a antiga não está mais funcionando corretamente."
+                },
+                {
+                    "codigo": "R014",
+                    "nome": "Substituição de braços de suspensão",
+                    "descricao": "Troca dos braços de suspensão danificados para garantir a estabilidade e segurança do veículo."
+                }
+            ]
+        }
+    ],
+    "intervencoes": [
+        {
+            "codigo": "R024",
+            "nome": "Serviço de transmissão",
+            "descricao": "Substituição do fluido da transmissão, ajuste ou reparação de componentes da transmissão."
+        },
+        {
+            "codigo": "R010",
+            "nome": "Ajuste do sistema de freios",
+            "descricao": "Ajuste dos componentes do sistema de freios para garantir um funcionamento adequado."
+        },
+        {
+            "codigo": "R011",
+            "nome": "Substituição de bateria",
+            "descricao": "Instalação de uma nova bateria quando a antiga não está mais funcionando corretamente."
+        },
+        {
+            "codigo": "R014",
+            "nome": "Substituição de braços de suspensão",
+            "descricao": "Troca dos braços de suspensão danificados para garantir a estabilidade e segurança do veículo."
+        }
+    ]
+}
