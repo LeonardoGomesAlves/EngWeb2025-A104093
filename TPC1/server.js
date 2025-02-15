@@ -32,7 +32,6 @@ function main_menu(res) {
                 
                 <div class="w3-container w3-teal">
                     <h1>Menu Principal</h1>
-                    <a href="/" class="back-button">Voltar para o Início</a>
                 </div>
                 
                 <body>
