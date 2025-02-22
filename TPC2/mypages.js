@@ -54,9 +54,11 @@ export function genAlunosPage(lalunos, data) {
         </head>
         <body>
             <div class="w3-card-4">
-                <header class="w3-container w3-purple">
-                    <h1>Lista de Alunos</h1>
+                <header class="w3-container w3-purple" style="display: flex; align-items: center;">
+                    <h1 style="margin: 0; flex-grow: 1;">Lista de Alunos</h1>
+                    <a href="/" class="w3-button w3-round-xlarge w3-green">Página inicial</a>
                 </header>
+
 
                 <div class="w3-container">
                     <table class="w3-table-all">
@@ -70,8 +72,10 @@ export function genAlunosPage(lalunos, data) {
 
     lalunos.forEach(aluno => {
         pagHTML += `
-        <tr>
-            <td><a href="/alunos/${aluno.id}">${aluno.id}</a></td>
+        
+        
+        <tr class="w3-hover-light-green" style="cursor: pointer;" onclick="window.location.href='/alunos/${aluno.id}';">
+            <td>${aluno.id}</td>
             <td>${aluno.nome}</td>
             <td>${aluno.instrumento}</td>
         </tr>
@@ -106,8 +110,9 @@ export function genCursosPage(lcursos, data) {
         </head>
         <body>
             <div class="w3-card-4">
-                <header class="w3-container w3-purple">
-                    <h1>Lista de Cursos</h1>
+                <header class="w3-container w3-purple" style="display: flex; align-items: center;">
+                    <h1 style="margin: 0; flex-grow: 1;">Lista de Cursos</h1>
+                    <a href="/" class="w3-button w3-round-xlarge w3-green">Página inicial</a>
                 </header>
 
                 <div class="w3-container">
@@ -121,8 +126,8 @@ export function genCursosPage(lcursos, data) {
 
     lcursos.forEach(curso => {
         pagHTML += `
-        <tr>
-            <td><a href="/cursos/${curso.id}">${curso.id}</a></td>
+        <tr class="w3-hover-light-green" style="cursor: pointer;" onclick="window.location.href='/cursos/${curso.id}';">
+            <td>${curso.id}</td>
             <td>${curso.designacao}</td>
         </tr>
         `
@@ -156,8 +161,9 @@ export function genInstrumentosPage(linstrumentos, data) {
         </head>
         <body>
             <div class="w3-card-4">
-                <header class="w3-container w3-purple">
-                    <h1>Lista de Instrumentos</h1>
+                <header class="w3-container w3-purple" style="display: flex; align-items: center;">
+                    <h1 style="margin: 0; flex-grow: 1;">Lista de Instrumentos</h1>
+                    <a href="/" class="w3-button w3-round-xlarge w3-green">Página inicial</a>
                 </header>
 
                 <div class="w3-container">
@@ -171,8 +177,8 @@ export function genInstrumentosPage(linstrumentos, data) {
 
     linstrumentos.forEach(instrumento => {
         pagHTML += `
-        <tr>
-            <td><a href="/instrumentos/${instrumento.id}">${instrumento.id}</a></td>
+        <tr class="w3-hover-light-green" style="cursor: pointer;" onclick="window.location.href='/instrumentos/${instrumento.id}';">
+            <td>${instrumento.id}</td>
             <td>${instrumento["#text"]}</td>
         </tr>
         `
@@ -206,8 +212,9 @@ export function genAlunoPage(aluno, data) {
         </head>
         <body>
             <div class="w3-card-4">
-                <header class="w3-container w3-purple">
-                    <h1>Perfil de Aluno</h1>
+                <header class="w3-container w3-purple" style="display: flex; align-items: center;">
+                    <h1 style="margin: 0; flex-grow: 1;">Perfil de Aluno</h1>
+                    <a href="/" class="w3-button w3-round-xlarge w3-green">Página inicial</a>
                 </header>
 
                 <div class="w3-container">
@@ -262,8 +269,9 @@ export function genCursoPage(curso, alunos, data) {
         </head>
         <body>
             <div class="w3-card-4">
-                <header class="w3-container w3-purple">
-                    <h1>Perfil de Curso</h1>
+                <header class="w3-container w3-purple" style="display: flex; align-items: center;">
+                    <h1 style="margin: 0; flex-grow: 1;">Perfil de Curso</h1>
+                    <a href="/" class="w3-button w3-round-xlarge w3-green">Página inicial</a>
                 </header>
 
                 <div class="w3-container">
@@ -296,8 +304,8 @@ export function genCursoPage(curso, alunos, data) {
     alunos.forEach(aluno => {
         pagHTML += 
         `
-        <tr>
-            <td><a href="/alunos/${aluno.id}">${aluno.id}</a></td>
+        <tr class="w3-hover-light-green" style="cursor: pointer;" onclick="window.location.href='/alunos/${aluno.id}';">
+            <td>${aluno.id}</td>
             <td>${aluno.nome}</td>
         </tr>                
         `
@@ -330,8 +338,9 @@ export function genInstrumentoPage(instrumento, alunos, data) {
         </head>
         <body>
             <div class="w3-card-4">
-                <header class="w3-container w3-purple">
-                    <h1>Perfil de Instrumento</h1>
+                <header class="w3-container w3-purple" style="display: flex; align-items: center;">
+                    <h1 style="margin: 0; flex-grow: 1;">Perfil de Instrumento</h1>
+                    <a href="/" class="w3-button w3-round-xlarge w3-green">Página inicial</a>
                 </header>
 
                 <div class="w3-container">
@@ -359,8 +368,8 @@ export function genInstrumentoPage(instrumento, alunos, data) {
     alunos.forEach(aluno => {
         pagHTML += 
         `
-        <tr>
-            <td><a href="/alunos/${aluno.id}">${aluno.id}</a></td>
+        <tr class="w3-hover-light-green" style="cursor: pointer;" onclick="window.location.href='/alunos/${aluno.id}';">
+            <td>${aluno.id}</td>
             <td>${aluno.nome}</td>
         </tr>                
         `

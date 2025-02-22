@@ -104,6 +104,17 @@ createServer(function(req, res) {
                     })
             })
     }
+    else if (req.url.match(/favicon\.ico$/)) {
+        readFile("image.png", function(erro, dados) {
+            if(erro) {
+                res.writeHead(404, {'Content-Type' : 'text/html; charset=utf-8'})
+                res.end('<p>Erro na leitura do ficheiro: ' + erro + '</p>')
+            } else {
+                res.writeHead(200, {'Content-Type': 'image/png'})
+                res.end(dados)
+            }
+        })
+    }
     else {
         res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
         res.end('<p>Operação não suportada: '+ req.url + '</p>')
