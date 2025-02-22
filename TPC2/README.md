@@ -24,9 +24,9 @@ Construir um serviço em nodejs, que consuma a API de dados servida pelo json-se
 
 ### Resolução do problema
 
-Para a resolução deste problema, uma vez que os datasets já se encontravam normalizados e com as característas necessárias (identificadores) para o desenvolvimento das páginas, bastou desenvolver o código para cada uma das páginas, **<a href="#">mypages.js</a>**, que trata apenas de desenvolver a parte de HTML e CSS, utilizado W3.CSS.
+Para a resolução deste problema, uma vez que os datasets já se encontravam normalizados e com as característas necessárias (identificadores) para o desenvolvimento das páginas, bastou desenvolver o código para cada uma das páginas, **<a href="https://github.com/LeonardoGomesAlves/EngWeb2025-A104093/blob/main/TPC2/mypages.js">mypages.js</a>**, que trata apenas de desenvolver a parte de HTML e CSS, utilizado W3.CSS.
 
-Assim, no ficheiro **<a href="#">escola_musica-server.js</a>**, atribui cada uma das páginas anteriores ao seu endpoint correspondente.
+Assim, no ficheiro **<a href="https://github.com/LeonardoGomesAlves/EngWeb2025-A104093/blob/main/TPC2/escola_musica-server.js">escola_musica-server.js</a>**, atribui cada uma das páginas anteriores ao seu endpoint correspondente.
 
 ### Exemplo da compilação do serviço
 
