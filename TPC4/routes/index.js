@@ -14,7 +14,7 @@ router.get('/', function(req, res) {
 router.get('/filmes', function(req, res) {
   axios.get('http://localhost:3000/filmes')
        .then(resp => {
-          res.render('filmes', {lfilmes: resp.data, tit:"Lista de Filmes"})
+          res.render('filmes', {lfilmes: resp.data, title:"Lista de Filmes"})
        })
        .catch(erro => {
           console.log(erro)
@@ -26,7 +26,7 @@ router.get('/filmes/edit/:id', function(req, res) {
   var filme_id = req.params.id
   axios.get(`http://localhost:3000/filmes/${filme_id}`)
       .then(resp => {
-        res.render('editfilm', {filme: resp.data, titulo: `Editar Filme ID: ${filme_id}`})
+        res.render('editfilm', {filme: resp.data, title: `Editar Filme ID: ${filme_id}`})
       })
       .catch(erro => {
         console.log(erro)
@@ -70,7 +70,7 @@ router.get('/actor/:nome', function(req, res) {
 
   axios.get(`http://localhost:3000/filmes?cast_like=${actor_nome}&_sort=title&_order=asc`)
     .then(resp => {
-      res.render('actorpage', {filmes: resp.data, tit: `Lista de filmes do Ator: ${actor_nome}`,})
+      res.render('actorpage', {filmes: resp.data, title: `Lista de filmes do Ator: ${actor_nome}`,})
     })
     .catch(erro => {
       console.log(erro)
