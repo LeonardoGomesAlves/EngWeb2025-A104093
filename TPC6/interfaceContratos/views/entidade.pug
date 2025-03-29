@@ -1,0 +1,30 @@
+extends layout
+
+block content
+    .w3-container.w3-margin
+        .w3-card-4
+            header.w3-container.w3-blue
+                h1= "Entidade: " + nome_entidade
+                a(href='/') Voltar à página principal
+            .w3-container
+                p
+                    strong NIPC da Entidade: 
+                    | #{nipc}
+                p
+                    strong Somatório do valor dos contratos: 
+                    | #{totalPrecoContratos} €
+                table.w3-table.w3-striped.w3-bordered.w3-hoverable
+                    thead
+                        tr.w3-light-grey
+                            th Id
+                            th Objeto
+                            th Data Celebração
+                            th Preço Contratual
+                    tbody
+                        each contrato in contratos
+                            tr
+                                td: a(href=`/${contrato._id}`)= contrato._id
+                                td= contrato.objectoContrato
+                                td= contrato.dataCelebracaoContrato
+                                td= contrato.precoContratual + " €"
+                

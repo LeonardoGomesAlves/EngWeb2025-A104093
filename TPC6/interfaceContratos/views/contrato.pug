@@ -1,0 +1,36 @@
+extends layout
+
+block content
+    .w3-container.w3-margin
+        .w3-card-4
+            header.w3-container.w3-blue
+                h1= title
+                a(href='/') Voltar à página inicial
+            .w3-container
+                table.w3-table
+                    thead
+                        tr.w3-light-grey
+                            th Id
+                            th Nº Anúncio
+                            th Tipo de Procedimento
+                            th Objeto do Contrato
+                            th Data de Publicação
+                            th Data de Celebração do Contrato
+                            th Preço Contratual
+                            th Prazo de Execução
+                            th NIPC Entidade Comunicante
+                            th Entidade Comunicante
+                            th Fundamentação
+                    tbody
+                        tr
+                            td= contrato._id
+                            td= contrato.nAnuncio
+                            td= contrato.tipoprocedimento
+                            td= contrato.objectoContrato
+                            td= contrato.dataPublicacao
+                            td= contrato.dataCelebracaoContrato
+                            td= contrato.precoContratual + "€"
+                            td= contrato.prazoExecucao
+                            td= contrato.NIPC_entidade_comunicante
+                            td= contrato.entidade_comunicante
+                            td= contrato.fundamentacao
