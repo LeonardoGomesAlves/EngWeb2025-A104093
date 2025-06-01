@@ -1,0 +1,107 @@
+extends layout
+
+block content
+  // Top bar fixa
+  // Top bar fixa
+  .w3-bar.w3-green.w3-padding.w3-flex-between.w3-top(style="display:flex;align-items:center;justify-content:space-between;")
+
+    a.button.w3-button.w3-white.w3-round(href="/") 
+      i.fa.fa-home
+      |   #[strong Página Inicial]
+
+    .w3-bar-item(style="flex:1;display:flex;justify-content:center;")
+      a.button.w3-button.w3-white.w3-round.upload-button(href="/upload")
+          i.fa.fa-upload 
+      form.w3-container(action="/search", method="GET", style="display:flex;gap:8px;")
+        input.w3-input.w3-border.w3-round(type="text", name="q", placeholder="Pesquisar utilizador", style="width:300px;" required)
+        button.w3-button.w3-white.w3-round(type="submit") Pesquisar
+    
+    if !iniciado
+      a.w3-bar-item.w3-button.w3-white.w3-round(href="/login") Iniciar Sessão
+    else
+      form(action="/logout", method="post", style="display:inline")
+        button.w3-button.w3-white.w3-round(type="submit", style="margin-right: 10px") 
+          | Terminar Sessão 
+          i.fa.fa-sign-out
+      a.button.w3-button.w3-white.w3-round(href=`/profile/${username}`) Perfil  
+        i.fa.fa-user
+        
+
+  .w3-container(style="margin-top:90px")
+    .w3-card.w3-round-large.w3-padding(style="max-width:800px; margin:0 auto")
+      h2.w3-center.w3-margin-bottom
+        i.fa.fa-plus-circle.w3-margin-right.w3-text-green
+        | Criar Novo Item
+
+      form(action="/upload" method="post" enctype="multipart/form-data")
+        .w3-section
+          label.w3-text-dark-grey
+            b Título
+          input.w3-input.w3-border.w3-round(type="text" name="titulo" maxlength="30" required)
+        
+        .w3-section
+          label.w3-text-dark-grey
+            b Descrição
+          textarea.w3-input.w3-border.w3-round(name="descricao" rows="4" required)
+        
+        .w3-section
+          label.w3-text-dark-grey
+            b Tipo
+          select.w3-select.w3-border.w3-round(name="tipo" required)
+            option(value="" disabled selected) Selecione um tipo
+            each tipo in tipos
+                option(value=tipo.toLowerCase())= tipo
+        
+        .w3-section
+          label.w3-text-dark-grey
+            b Classificadores
+          .w3-container.w3-border.w3-round.w3-padding(style="max-height:200px; overflow-y:auto")
+              each classificador in classificadores
+                .w3-row(style="margin:8px 0")
+                  label.w3-text-dark-grey(style="display:flex; align-items:center")
+                    input.w3-check(type="checkbox", name="classificadores", value=classificador.toLowerCase(), style="margin-right:10px;")
+                    span(style="height: 13px;")= classificador
+        
+        .w3-section
+          label.w3-text-dark-grey(style="display:flex; align-items:center")
+            input.w3-check(type="checkbox", name="visible", style="margin-right:10px;")
+            span(style="height: 13px;")
+              b Item Público
+              small.w3-text-grey(style="margin-left:10px") (Marque para ser público)
+        
+        // Upload de arquivos
+        
+        .w3-section
+          .w3-container.w3-padding-small(style="margin-bottom:10px;")
+            .w3-row
+              .w3-col.s6
+                h4.w3-text-dark-grey
+                  b Ficheiros
+              .w3-col.s6.w3-right-align
+                button.w3-button.w3-green.w3-round(type='button' onClick='addFileForm()')
+                  i.fa.fa-plus.w3-margin-right
+                  | Adicionar ficheiro
+          
+          .w3-container#fields
+            // Primeiro campo de arquivo (sempre presente)
+            .w3-card.w3-padding.w3-margin-bottom.file-container
+              .w3-row
+                .w3-col.s11
+                  label.w3-text-dark-grey
+                    b Nome (opcional)
+                  input.w3-input.w3-border.w3-light-grey.w3-round(type='text' name='paths' placeholder='Ex: data/pasta/arquivo.jpg')
+                  
+                  label.w3-text-dark-grey(style="margin-top:10px")
+                    b Selecione o ficheiro
+                  input.w3-input.w3-border.w3-light-grey.w3-round(type='file' name='ficheiros')
+                .w3-col.s1.w3-center
+                  // O primeiro não tem botão de remover
+        
+        // Botões de ação
+        .w3-section.w3-center(style="margin-top:30px")
+          button.w3-button.w3-red.w3-round-large(type="button" onclick="window.location.href='/'", style="margin-right:10px") 
+            i.fa.fa-times.w3-margin-right
+            | Cancelar
+          button.w3-button.w3-green.w3-round-large(type="submit")
+            i.fa.fa-upload.w3-margin-right
+            | Enviar

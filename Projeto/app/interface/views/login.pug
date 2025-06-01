@@ -1,0 +1,54 @@
+extends layout
+
+block content
+  .w3-bar.w3-green.w3-padding.w3-flex-between.w3-top(style="display:flex;align-items:center;justify-content:space-between;")
+
+    a.button.w3-button.w3-white.w3-round(href="/") 
+      i.fa.fa-home
+      |   #[strong Página Inicial]
+
+    .w3-bar-item(style="flex:1;display:flex;justify-content:center;")
+      form.w3-container(action="/search", method="GET", style="display:flex;gap:8px;")
+        input.w3-input.w3-border.w3-round(type="text", name="q", placeholder="Pesquisar utilizador", style="width:300px;" required)
+        button.w3-button.w3-white.w3-round(type="submit") Pesquisar
+    
+
+  .w3-container(style="margin-top:90px")
+    .w3-card.w3-round-large.w3-padding(style="max-width:500px; margin:0 auto;")
+      h2.w3-center.w3-text-green
+        i.fa.fa-sign-in.w3-margin-right
+        | Iniciar Sessão
+
+      form(method="POST", action="/login", class="w3-container")
+        .w3-section
+          label.w3-text-dark-grey
+            b Username
+          input.w3-input.w3-border.w3-round(type="text", name="username", id="username", required, placeholder="Introduza o username")
+        .w3-section
+          label.w3-text-dark-grey
+            b Password
+          input.w3-input.w3-border.w3-round(type="password", name="password", id="password", required, placeholder="Introduza a password")
+        .w3-section.w3-center(style="margin-top:30px")
+          button.w3-button.w3-green.w3-round-large(type="submit" style="width: 50%;")
+            i.fa.fa-sign-in.w3-margin-right
+            | Entrar
+
+        // iniciar sessão com redes sociais
+        .w3-section.w3-center(style="display: flex; align-items: center; gap: 12px;")
+          hr(style="flex:1; border: none; border-top: 1.5px solid #ccc;")
+          span.w3-text-grey(style="font-weight: bold;") ou
+          hr(style="flex:1; border: none; border-top: 1.5px solid #ccc;")
+
+        .w3-section.w3-center(style="display:flex; justify-content:center; gap:16px;")
+          a.w3-button.w3-white.w3-round(style="border:1px solid blue;  min-width:180px;" href="/auth/google")
+            i.fa.fa-google.w3-margin-right
+            | Google
+          a.w3-button.w3-white.w3-round(style="border:1px solid blue; min-width:180px;" href="/auth/facebook")
+            i.fa.fa-facebook.w3-margin-right
+            | Facebook
+
+    .w3-card.w3-round-large.w3-padding.w3-margin-top.w3-center(style="max-width: 500px; margin: 32px auto 0 auto;")
+        span Ainda não tem conta?
+        a.w3-button.w3-white.w3-round(href="/register" style="margin-left:8px")
+          i.fa.fa-user-plus.w3-margin-right
+          | Registar

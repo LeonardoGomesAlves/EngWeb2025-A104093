@@ -1,0 +1,95 @@
+extends ../layout
+
+block content
+  .w3-bar.w3-green.w3-padding.w3-top(style="display:flex;align-items:center;")
+    // Botões à esquerda
+    .w3-bar-left(style="display:flex;gap:10px;flex:1;")
+      a.w3-button.w3-white.w3-round(href="/admin/items") 
+        i.fa.fa-arrow-left
+        |  Voltar
+    
+    // Título no centro
+    .w3-bar-center(style="flex:1;text-align:center;")
+      h3(style="margin:0;") Editar Recurso
+    
+    // Logout à direita
+    .w3-bar-right(style="flex:1;text-align:right;")
+      form(action="/logout", method="post", style="display:inline;")
+        button.w3-button.w3-white.w3-round(type="submit") 
+          | Logout
+          i.fa.fa-sign-out
+
+  .w3-container(style="margin-top:90px")
+    
+    // Mensagens de erro
+    if error === 'update_failed'
+      .w3-panel.w3-red.w3-round
+        p Erro ao atualizar recurso! Verifique os dados.
+    else if error === 'item_not_found'
+      .w3-panel.w3-red.w3-round
+        p Recurso não encontrado!
+
+    .w3-card.w3-padding.w3-round-large
+      .w3-container.w3-padding
+        h2 Editar Recurso
+        
+        form(action=`/admin/items/${item._id}/edit`, method="POST")
+          .w3-row.w3-section
+            .w3-col.m6.w3-padding
+              label.w3-text-black Título:
+              input.w3-input.w3-border(type="text", name="titulo", 
+                                       value=item.titulo || '', 
+                                       required)
+            
+            .w3-col.m6.w3-padding
+              label.w3-text-black Tipo:
+              select.w3-select.w3-border(name="tipo", required)
+                each tipo in tipos
+                  - var tipoUpper = tipo.charAt(0).toUpperCase() + tipo.slice(1).toLowerCase()
+                  option(value=tipo, selected=item.tipo === tipo ? true : false)= tipoUpper
+
+          .w3-row.w3-section
+            .w3-col.m12.w3-padding
+              label.w3-text-black Descrição:
+              textarea.w3-input.w3-border(name="descricao", rows="4", required)= item.descricao || ''
+
+          .w3-row.w3-section
+            .w3-col.m6.w3-padding
+              label.w3-text-black Autor:
+              input.w3-input.w3-border(type="text", name="autor", 
+                                       value=item.user_id || '', 
+                                       disabled)
+            
+            .w3-col.m6.w3-padding
+              label.w3-text-black Data de Criação:
+              input.w3-input.w3-border(type="date", name="dataCriacao", 
+                                       value=item.dataCriacao ? item.dataCriacao.split('T')[0] : '')
+
+          .w3-row.w3-section
+            .w3-col.m12.w3-padding
+              label.w3-text-black Classificadores:
+              .w3-row
+                each classificador in classificadores
+                  .w3-col.m4.w3-padding-small
+                    label.w3-text-dark-grey(style="display: flex; align-items: center")
+                      - var classificadorUpper = classificador.charAt(0).toUpperCase() + classificador.slice(1).toLowerCase()
+                      input.w3-check(type="checkbox", name="classificadores", value=classificador, 
+                                    checked=item.classificadores && item.classificadores.includes(classificador) ? true : false,
+                                    style="margin-right:10px;")
+                      span= classificadorUpper
+
+          .w3-row.w3-section
+            .w3-col.m6.w3-padding
+              label.w3-text-black Visibilidade:
+              select.w3-select.w3-border(name="visible", required)
+                option(value="true", selected=item.visible === true ? true : false) Público
+                option(value="false", selected=item.visible === false ? true : false) Privado
+
+          .w3-section
+            button.w3-button.w3-green.w3-round(type="submit")
+              i.fa.fa-save
+              |  Atualizar
+            
+            a.w3-button.w3-grey.w3-round.w3-margin-left(href="/admin/items")
+              i.fa.fa-times
+              |  Cancelar

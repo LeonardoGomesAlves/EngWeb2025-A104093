@@ -1,0 +1,190 @@
+extends layout
+
+block content
+  // Mostrar mensagem de erro se houver
+  if query.error === 'upload_failed'
+    .w3-panel.w3-red.w3-round.w3-margin-bottom
+      .w3-container
+        h4
+          i.fa.fa-exclamation-triangle.w3-margin-right
+          | Erro no Upload
+        p Ocorreu um erro ao processar o seu upload. Tente novamente.
+
+  // Mostrar mensagem de sucesso se houver
+  if query.upload === 'success'
+    .w3-panel.w3-green.w3-round.w3-margin-bottom
+      .w3-container
+        h4
+          i.fa.fa-check.w3-margin-right
+          | Upload Realizado
+        p O seu item foi criado com sucesso!
+
+  // Top bar fixa
+  .w3-bar.w3-green.w3-padding.w3-flex-between.w3-top(style="display:flex;align-items:center;justify-content:space-between;")
+
+    a.button.w3-button.w3-white.w3-round(href="/") 
+      i.fa.fa-home
+      |   #[strong Página Inicial]
+
+    .w3-bar-item(style="flex:1;display:flex;justify-content:center;")
+      a.button.w3-button.w3-white.w3-round.upload-button(href="/upload")
+          i.fa.fa-upload 
+      form.w3-container(action="/search", method="GET", style="display:flex;gap:8px;")
+        input.w3-input.w3-border.w3-round(type="text", name="q", placeholder="Pesquisar utilizador", style="width:300px;" required)
+        button.w3-button.w3-white.w3-round(type="submit") Pesquisar
+    
+    if user && user.level === 'admin'
+      a.w3-button.w3-white.w3-round(href="/admin", style="margin-right: 10px") 
+        i.fa.fa-cog
+        |  Admin
+
+    if !iniciado
+      a.w3-bar-item.w3-button.w3-white.w3-round(href="/login") Iniciar Sessão
+    else
+      form(action="/logout", method="post", style="display:inline")
+        button.w3-button.w3-white.w3-round(type="submit", style="margin-right: 10px") 
+          | Terminar Sessão 
+          i.fa.fa-sign-out
+      a.button.w3-button.w3-white.w3-round(href=`/profile/${username}`) Perfil  
+        i.fa.fa-user
+        
+
+
+  // layout em grid: esquerda e direita
+  .w3-container(style="margin-top:90px")
+    
+  // Seção de Notícias/Avisos com scroll
+  if noticias && noticias.length > 0
+    .w3-container(style="margin-bottom: 20px;")
+      .noticias-container(style="max-height: 150px; overflow-y: auto; padding-right: 10px;")
+        each noticia in noticias
+          .w3-panel.w3-leftbar.w3-border-blue.w3-pale-blue.w3-round(style="margin-bottom: 15px; position: relative;")
+            span.w3-button.w3-display-topright.w3-transparent.w3-text-blue(onclick=`this.parentElement.style.display='none'` style="font-size: 18px; padding: 4px 8px;") ×
+            
+            .w3-row
+              .w3-col.s1.w3-center
+                i.fa.fa-bullhorn.w3-text-blue(style="font-size: 20px; margin-top: 5px;")
+              
+              .w3-col.s11
+                h4.w3-text-blue(style="margin: 0 0 8px 0; ")
+                  i.fa.fa-newspaper-o.w3-margin-right
+                  | #{noticia.titulo}
+                
+                p.w3-text-dark-grey(style="margin: 0 0 8px 0; line-height: 1.4; word-wrap: break-word; overflow-wrap: break-word; hyphens: auto;")= noticia.descricao
+                
+                p.w3-text-grey.w3-small(style="margin: 0;")
+                  i.fa.fa-calendar.w3-margin-right
+                  | #{new Date(noticia.data).toLocaleDateString('pt-PT')}
+    
+  .content-grid(style="display: grid; grid-template-columns: 3fr 1fr; gap: 30px;")
+      
+      // feed
+      .div1
+        .w3-card.w3-padding.w3-round-large    
+          if items && items.length > 0
+            ul.w3-ul.w3-hoverable#feedItems
+              each item in items 
+                - const itemTipo = item.tipo && item.tipo.toLowerCase() || ''
+                li.w3-padding-16.feed-item(data-tipo=itemTipo data-classificadores=(item.classificadores ? item.classificadores.join(',').toLowerCase() : '') data-href=`/item/${item._id}`) 
+                  h3= item.titulo
+                  p.w3-text-gray.w3-medium(style="margin: 0px;") Submetido por 
+                    a.w3-text-blue(href=`/profile/${item.user_id}`) @#{item.user_id}
+                    |  • #{formatTimeAgo(item.dataSubmissao)}
+                  - const desc = item.descricao.length > 100 ? item.descricao.substring(0, 100) + '...' : item.descricao
+                  p.w3-text-gray.w3-medium(style="margin: 0px; word-break: break-word; white-space: pre-line;")= desc
+                  
+                  .w3-section
+                    if item.tipo || (item.classificadores && item.classificadores.length > 0)
+                      p.w3-text-grey.w3-small(style="margin-top:5px")
+                        if item.tipo
+                          span.w3-text-green
+                            i.fa.fa-tag.w3-margin-right
+                            | #{item.tipo}
+                        
+                        if item.classificadores && item.classificadores.length > 0
+                          if item.tipo
+                            span.w3-margin-left.w3-margin-right |
+                          span.w3-text-blue
+                            i.fa.fa-bookmark.w3-margin-right
+                            | #{item.classificadores.join(', ')}
+
+                  if item.ficheiros && item.ficheiros.length > 0
+                    - let imageCount = 0
+                    - const maxImages = 2
+                    each ficheiro, index in item.ficheiros
+                      - const partes = ficheiro.split("/repository/")
+                      if partes.length > 1
+                        - const pathParts = partes[1].split('/', 1)
+                        - const id = pathParts[0]
+                        - const path = partes[1].substring(id.length + 1)
+                        - const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp)$/i.test(path)
+                        if isImage
+                          if imageCount < maxImages
+                            img.w3-image(style="max-width:300px;margin:5px", src=`http://localhost:3333/api/files/public/${id}/${encodeURIComponent(path)}`, alt="Imagem", loading="lazy")
+                            - imageCount++
+                          else
+                            a.w3-button.w3-blue.w3-small.w3-round(href=`#`) 
+                              i.fa.fa-file-image-o
+                              |  Ver todas
+                            - imageCount++
+                
+                  .w3-row(style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;")
+                    .w3-col(style="display: flex; align-items: center;")
+                      // Mostrar número de likes
+                      span.w3-text-grey.w3-small(style="margin-right: 15px;")
+                        i.fa.fa-heart.w3-margin-right
+                        span.like-count(data-item-id=item._id)= item.total_likes || 0
+                        |  likes
+                      
+                        
+                      
+                
+          else 
+            p No items to display
+
+   
+      // filtro
+      .div2
+        .w3-card.w3-padding.w3-round-large
+          h3.w3-text-grey(style="margin-top:10px")
+            i.fa.fa-filter
+            |  Filtros
+
+          form(action="/", method="GET")
+            // tipos
+            .w3-container.w3-padding-small(style="margin:10px 0")
+              button.w3-button.w3-light-grey.w3-block(type="button" onclick="toggleTipo()" style="text-align:left; background-color:#f1f1f1; padding:12px;")
+                | Tipos
+                i.fa.fa-arrow-down.w3-right#tipoArrow
+            
+            #tipo-section.w3-container.w3-padding-small(style="padding-left:20px;display:none;")
+              if typeof tipos !== 'undefined'
+                each tipo in tipos
+                  .w3-row(style="margin:16px 0")
+                    label.w3-text-dark-grey(style="display:flex; align-items:center")
+                      input.w3-check.tipo-checkbox(type="checkbox", name="tipo", value=tipo, style="margin-right:10px;", checked=(Array.isArray(query.tipo) ? query.tipo.includes(tipo) : query.tipo === tipo))
+                      span(style="margin-top: 8px;") #{tipo}
+
+            // classificadores
+            .w3-container.w3-padding-small(style="margin:10px 0")
+              button.w3-button.w3-light-grey.w3-block(type="button" onclick="toggleClassificadores()" style="text-align:left; background-color:#f1f1f1; padding:12px;")
+                | Classificadores
+                i.fa.fa-arrow-down.w3-right#classificadoresArrow
+
+            #classificadores-section.w3-container.w3-padding-small(style="padding-left:20px;display:none;")
+              if typeof classificadores !== 'undefined'
+                each classificador in classificadores
+                  .w3-row(style="margin:16px 0")
+                    label.w3-text-dark-grey(style="display: flex; align-items: center")
+                      input.w3-check.classificador-checkbox(type="checkbox", name="classificador", value=classificador, style="margin-right:10px; vertical-align: middle", checked=(Array.isArray(query.classificador) ? query.classificador.includes(classificador) : query.classificador === classificador))
+                      span(style="margin-top: 8px;") #{classificador}
+
+
+            form(action="/", method="GET")
+              .w3-container.w3-center(style="margin-top:20px; display: flex; justify-content: space-evenly;")
+                button.w3-button.w3-red.w3-round-large#clearFiltersBtn(type="submit" style="padding:8px 16px; margin-left:10px") 
+                  i.fa.fa-trash
+                  |  Limpar filtros
+                button.w3-button.w3-blue.w3-round-large(type="submit" style="padding:8px 16px;")
+                  i.fa.fa-filter
+                  |  Filtrar

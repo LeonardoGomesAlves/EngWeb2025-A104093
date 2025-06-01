@@ -1,0 +1,131 @@
+extends ../layout
+
+block content
+  .w3-bar.w3-green.w3-padding.w3-top(style="display:flex;align-items:center;")
+    .w3-bar-left(style="display:flex;gap:10px;flex:1;")
+      a.w3-button.w3-white.w3-round(href="/") 
+        i.fa.fa-home
+        |  Página Inicial
+      
+      a.w3-button.w3-white.w3-round(href="/admin") 
+        i.fa.fa-arrow-left
+        |  Dashboard
+    
+    .w3-bar-center(style="flex:1;text-align:center;")
+      h3(style="margin:0;") Gestão de Notícias
+    
+    .w3-bar-right(style="flex:1;text-align:right;")
+      form(action="/logout", method="post", style="display:inline;")
+        button.w3-button.w3-white.w3-round(type="submit") 
+          | Logout
+          i.fa.fa-sign-out
+
+  .w3-container(style="margin-top:90px")
+    
+    // Métricas principais
+    .w3-row-padding
+      .w3-col.l3.m6.s12.w3-padding
+        .w3-card.w3-orange.w3-padding.w3-center
+          h1= stats.totalViews || 0
+          h3 Total de Visualizações
+          p.w3-small Desde o início da plataforma
+          
+      .w3-col.l3.m6.s12.w3-padding
+        .w3-card.w3-teal.w3-padding.w3-center
+          h1= stats.totalDownloads || 0
+          h3 Total de Downloads
+          p.w3-small Ficheiros descarregados
+
+      .w3-col.l3.m6.s12.w3-padding
+        .w3-card.w3-blue.w3-padding.w3-center
+          h1= stats.publicItems || 0
+          h3 Recursos Públicos
+          p.w3-small Disponíveis para consulta
+
+      .w3-col.l3.m6.s12.w3-padding
+        .w3-card.w3-green.w3-padding.w3-center
+          h1= stats.totalUsers || 0
+          h3 Utilizadores Ativos
+          p.w3-small Registados na plataforma
+
+    .w3-row-padding.w3-margin-top
+      .w3-col.m12
+        .w3-card.w3-padding.w3-round-large
+          h3.w3-text-dark-grey
+            i.fa.fa-chart-bar.w3-margin-right
+            | Estatísticas gerais
+          
+          .w3-row-padding
+            .w3-col.m4.w3-center
+              - const avgViews = stats.totalItems > 0 ? Math.round((stats.totalViews || 0) / stats.totalItems) : 0
+              h4.w3-text-orange= avgViews
+              p Média de views por item
+            
+            .w3-col.m4.w3-center
+              - const avgDownloads = stats.totalItems > 0 ? Math.round((stats.totalDownloads || 0) / stats.totalItems) : 0
+              h4.w3-text-teal= avgDownloads
+              p Média de downloads por item
+            
+
+    .w3-row-padding.w3-margin-top
+      .w3-col.m12
+        .w3-card.w3-padding.w3-round-large
+          h2.w3-text-blue
+            i.fa.fa-trophy.w3-margin-right
+            | Rankings de itens mais populares
+
+          .w3-row-padding
+            .w3-col.m6
+              h4.w3-text-orange
+                i.fa.fa-eye.w3-margin-right
+                | Top 5 Itens Mais Visualizados
+              
+              if stats.topViewed && stats.topViewed.length > 0
+                .w3-ul.w3-card.w3-white
+                  each item, index in stats.topViewed
+                    li.w3-padding.w3-hover-light-grey
+                      a(href=`/item/${item._id}` style="text-decoration: none; color: inherit; display: block;")
+                        .w3-row
+                          .w3-col.s1
+                            .w3-circle.w3-orange.w3-center(style="width:30px;height:30px;line-height:30px;")
+                              strong= index + 1
+                          .w3-col.s8
+                            h5(style="margin:0;")= item.titulo
+                            p.w3-text-grey.w3-small(style="margin:0;") 
+                              i.fa.fa-user.w3-margin-right
+                              | #{item.user_id}
+                          .w3-col.s3.w3-right-align
+                            span.w3-tag.w3-orange.w3-large
+                              i.fa.fa-eye.w3-margin-right
+                              | #{item.views || 0}
+              else
+                .w3-panel.w3-light-grey.w3-center
+                  p.w3-text-grey Nenhum dado disponível
+
+            .w3-col.m6
+              h4.w3-text-teal
+                i.fa.fa-download.w3-margin-right
+                | Top 5 Itens Mais Descarregados
+              
+              if stats.topDownloaded && stats.topDownloaded.length > 0
+                .w3-ul.w3-card.w3-white
+                  each item, index in stats.topDownloaded
+                    li.w3-padding.w3-hover-light-grey
+                      a(href=`/item/${item._id}` style="text-decoration: none; color: inherit; display: block;")
+                        .w3-row
+                          .w3-col.s1
+                            .w3-circle.w3-teal.w3-center(style="width:30px;height:30px;line-height:30px;")
+                              strong= index + 1
+                          .w3-col.s8
+                            h5(style="margin:0;")= item.titulo
+                            p.w3-text-grey.w3-small(style="margin:0;") 
+                              i.fa.fa-user.w3-margin-right
+                              | #{item.user_id}
+                          .w3-col.s3.w3-right-align
+                            span.w3-tag.w3-teal.w3-large
+                              i.fa.fa-download.w3-margin-right
+                              | #{item.downloads || 0}
+              else
+                .w3-panel.w3-light-grey.w3-center
+                  p.w3-text-grey Nenhum dado disponível
+

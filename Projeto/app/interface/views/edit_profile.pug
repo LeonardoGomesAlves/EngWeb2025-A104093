@@ -1,0 +1,98 @@
+extends layout
+
+block content
+  // Top bar fixa
+  .w3-bar.w3-green.w3-padding.w3-flex-between.w3-top(style="display:flex;align-items:center;justify-content:space-between;")
+    a.button.w3-button.w3-white.w3-round(href="/") 
+      i.fa.fa-home
+      |   #[strong Página Inicial]
+
+    .w3-bar-item(style="flex:1;display:flex;justify-content:center;")
+      form.w3-container(action="/search", method="GET", style="display:flex;gap:8px;")
+        input.w3-input.w3-border.w3-round(type="text", name="q", placeholder="Pesquisar utilizador", style="width:300px;" required)
+        button.w3-button.w3-white.w3-round(type="submit") Pesquisar
+    
+    if !username
+      a.w3-bar-item.w3-button.w3-white.w3-round(href="/login") Iniciar Sessão
+    else
+      form(action="/logout", method="post", style="display:inline")
+        button.w3-button.w3-white.w3-round(type="submit", style="margin-right: 10px") 
+          | Terminar Sessão 
+          i.fa.fa-sign-out
+      a.button.w3-button.w3-white.w3-round(href=`/profile/${username}`) Perfil  
+        i.fa.fa-user
+
+  .w3-container(style="margin-top:90px")
+    .w3-content(style="max-width:600px")
+      .w3-card-4.w3-round-large.w3-padding
+        h2.w3-text-dark-grey.w3-center 
+          i.fa.fa-edit.w3-margin-right
+          | Editar Perfil
+        
+        if error
+          .w3-panel.w3-red.w3-round
+            p= error
+            
+        if success
+          .w3-panel.w3-green.w3-round
+            p= success
+
+        form(action="/edit-profile", method="POST")
+          h4.w3-text-dark-grey Alterar nome
+          .w3-row.w3-section
+            .w3-col(style="width:50px")
+              i.w3-xlarge.fa.fa-id-card(style="margin-top:8px")
+            .w3-rest
+              input.w3-input.w3-border.w3-round(
+                type="text", 
+                name="name", 
+                placeholder="Nome completo", 
+                value=user_info ? user_info.name : "", 
+                required
+              )
+        
+          if !user_info || !user_info.facebookId
+            hr.w3-border-grey
+            h4.w3-text-dark-grey Alterar senha
+            
+            .w3-row.w3-section
+              .w3-col(style="width:50px")
+                i.w3-xlarge.fa.fa-lock(style="margin-top:8px")
+              .w3-rest
+                input.w3-input.w3-border.w3-round(
+                  type="password", 
+                  name="password", 
+                  placeholder="Senha atual"
+                )
+            
+            .w3-row.w3-section
+              .w3-col(style="width:50px")
+                i.w3-xlarge.fa.fa-lock(style="margin-top:8px")
+              .w3-rest
+                input.w3-input.w3-border.w3-round(
+                  type="password", 
+                  name="newPassword", 
+                  placeholder="Nova senha"
+                )
+            
+            .w3-row.w3-section
+              .w3-col(style="width:50px")
+                i.w3-xlarge.fa.fa-lock(style="margin-top:8px")
+              .w3-rest
+                input.w3-input.w3-border.w3-round(
+                  type="password", 
+                  name="confirmPassword", 
+                  placeholder="Confirmar nova senha"
+                )
+            
+            small.w3-text-grey.w3-margin-left Deixe os campos de senha em branco se não quiser alterá-la
+ 
+          // Botões
+          .w3-row.w3-section.w3-center
+            button.w3-button.w3-green.w3-round-large.w3-margin-right(type="submit")
+              i.fa.fa-save.w3-margin-right
+              | Salvar alterações
+            
+            a.w3-button.w3-grey.w3-round-large(href=`/profile/${user_info ? user_info.username : ''}`)
+              i.fa.fa-times.w3-margin-right
+              | Cancelar

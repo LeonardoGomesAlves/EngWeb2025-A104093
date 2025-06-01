@@ -1,0 +1,8 @@
+/app/api/node_modules
+/app/api/upload/
+/app/api/repository/
+/app/api/.env
+/app/api/logs
+
+/app/interface/node_modules
+/app/interface/uploads

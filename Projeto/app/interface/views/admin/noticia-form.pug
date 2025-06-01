@@ -1,0 +1,64 @@
+extends ../layout
+
+block content
+  .w3-bar.w3-green.w3-padding.w3-top(style="display:flex;align-items:center;")
+    .w3-bar-left(style="display:flex;gap:10px;flex:1;")
+      a.w3-button.w3-white.w3-round(href="/admin/noticias") 
+        i.fa.fa-arrow-left
+        |  Voltar
+    
+    .w3-bar-center(style="flex:1;text-align:center;")
+      h3(style="margin:0;")= noticia ? 'Editar Notícia' : 'Criar Notícia'
+    
+    .w3-bar-right(style="flex:1;text-align:right;")
+      form(action="/logout", method="post", style="display:inline;")
+        button.w3-button.w3-white.w3-round(type="submit") 
+          | Logout
+          i.fa.fa-sign-out
+
+  .w3-container(style="margin-top:90px")
+    
+    if error === 'create_failed' || error === 'update_failed'
+      .w3-panel.w3-red.w3-round
+        p Erro ao processar notícia! Verifique os dados.
+
+    .w3-card.w3-padding.w3-round-large
+      .w3-container.w3-padding
+        h2= noticia ? 'Editar Notícia' : 'Criar Notícia'
+        
+        form(action=noticia ? `/admin/noticias/${noticia._id}/edit` : '/admin/noticias/create', method="POST")
+          .w3-row.w3-section
+            .w3-col.m12.w3-padding
+              label.w3-text-black Título:
+              input.w3-input.w3-border(type="text", name="titulo", 
+                                       value=noticia ? noticia.titulo : '', 
+                                       maxlength = "30",
+                                       required)
+
+          .w3-row.w3-section
+            .w3-col.m12.w3-padding
+              label.w3-text-black Corpo da Notícia:
+              textarea.w3-input.w3-border(name="descricao", rows="6", required)= noticia ? noticia.descricao : ''
+
+          .w3-row.w3-section
+            .w3-col.m6.w3-padding
+              label.w3-text-black Data:
+              input.w3-input.w3-border(type="date", name="data", 
+                                       value=new Date().toISOString().split('T')[0],
+                                       readonly)
+            
+            .w3-col.m6.w3-padding
+              label.w3-text-black Visibilidade:
+              select.w3-select.w3-border(name="visible", required)
+                option(value="true", selected=noticia ? noticia.visible === true : true) Visível
+                option(value="false", selected=noticia ? noticia.visible === false : false) Oculta
+
+
+          .w3-section
+            button.w3-button.w3-green.w3-round(type="submit")
+              i.fa(class=noticia ? 'fa-save' : 'fa-plus')
+              | #{noticia ? ' Atualizar' : ' Criar'}
+            
+            a.w3-button.w3-grey.w3-round.w3-margin-left(href="/admin/noticias")
+              i.fa.fa-times
+              |  Cancelar

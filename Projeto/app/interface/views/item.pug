@@ -1,0 +1,264 @@
+extends layout
+
+block content
+  // Top bar fixa
+  .w3-bar.w3-green.w3-padding.w3-flex-between.w3-top(style="display:flex;align-items:center;justify-content:space-between;")
+
+    a.button.w3-button.w3-white.w3-round(href="/") 
+      i.fa.fa-home
+      |   #[strong Página Inicial]
+
+    .w3-bar-item(style="flex:1;display:flex;justify-content:center;")
+      a.button.w3-button.w3-white.w3-round.upload-button(href="/upload")
+          i.fa.fa-upload 
+      form.w3-container(action="/search", method="GET", style="display:flex;gap:8px;")
+        input.w3-input.w3-border.w3-round(type="text", name="q", placeholder="Pesquisar utilizador", style="width:300px;" required)
+        button.w3-button.w3-white.w3-round(type="submit") Pesquisar
+    
+    if !username
+      a.w3-bar-item.w3-button.w3-white.w3-round(href="/login") Iniciar Sessão
+    else
+      form(action="/logout", method="post", style="display:inline")
+        button.w3-button.w3-white.w3-round(type="submit", style="margin-right: 10px") 
+          | Terminar Sessão 
+          i.fa.fa-sign-out
+      a.button.w3-button.w3-white.w3-round(href=`/profile/${username}`) Perfil  
+        i.fa.fa-user
+
+  // layout em grid: esquerda e direita
+  .w3-container(style="margin-top:90px")
+    // feed
+    .div1
+      .w3-card.w3-padding.w3-round-large    
+        if item
+          - const itemTipo = item.tipo && item.tipo.toLowerCase() || ''
+          .w3-padding-16.feed-item(data-tipo=itemTipo data-classificadores=(item.classificadores ? item.classificadores.join(',').toLowerCase() : '')) 
+            // Cabeçalho com título e botões de ação
+            .w3-section(style="display: flex; justify-content: space-between; align-items: flex-start;")
+              div
+                h3= item.titulo
+                p.w3-text-gray.w3-medium(style="margin: 0px;") 
+                  | Submetido por 
+                  a.w3-text-blue(href=`/profile/${item.user_id}`) @#{item.user_id}
+                  |  • #{formatTimeAgo(item.dataSubmissao)}
+              
+              // Botões de ação no lado direito
+              .action-buttons(style="display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap;")
+                // Botão de exportar (sempre visível se logado)
+                if username
+                  a.w3-button.w3-blue.w3-round.w3-small(
+                    href=`/item/${item._id}/export`
+                    style="padding: 8px 12px;"
+                  )
+                    i.fa.fa-download.w3-margin-right
+                    | Exportar
+                
+                // Botões de gestão (só para o dono)
+                if username && username == item.user_id
+                  // Botão de visibilidade
+                  if item.visible
+                    form(action=`/visibility/${item._id}`, method="post", style="margin: 0; display: inline-block;")
+                      input(type="hidden", name="_method", value="PUT")
+                      input(type="hidden", name="visible", value="false")
+                      button.w3-button.w3-green.w3-round.w3-small(type="submit", style="padding: 8px 12px;")
+                        i.fa.fa-eye.w3-margin-right
+                        | Público
+                  else
+                    form(action=`/visibility/${item._id}`, method="post", style="margin: 0; display: inline-block;")
+                      input(type="hidden", name="_method", value="PUT")
+                      input(type="hidden", name="visible", value="true")
+                      button.w3-button.w3-red.w3-round.w3-small(type="submit", style="padding: 8px 12px;")
+                        i.fa.fa-eye-slash.w3-margin-right
+                        | Privado
+                  
+                  // Botão de eliminar
+                  form(action=`/delete-item/${item._id}`, method="post", style="margin: 0; display: inline-block;", onsubmit="return confirm('Tem a certeza que deseja eliminar este item? Esta ação não pode ser desfeita.')")
+                    button.w3-button.w3-deep-orange.w3-round.w3-small(type="submit", style="padding: 8px 12px;")
+                      i.fa.fa-trash.w3-margin-right
+                      | Eliminar
+
+            p.w3-text-gray.w3-medium(style="margin: 0px; word-break: break-word; white-space: pre-line;")= item.descricao
+            
+            .w3-section
+              if item.tipo
+                span.w3-tag.w3-round.w3-green.w3-margin-right
+                  i.fa.fa-tag.w3-margin-right
+                  | #{item.tipo}
+              
+              if item.classificadores && item.classificadores.length > 0
+                each classificador in item.classificadores
+                  span.w3-tag.w3-round.w3-blue.w3-margin-right.w3-margin-top
+                    i.fa.fa-bookmark.w3-margin-right
+                    | #{classificador}
+
+
+            - var imageCount = 0
+            - var maxImages = 3
+            
+            if item.ficheiros && item.ficheiros.length > 0
+              - const hasImages = item.ficheiros.some(function(f) {
+              -   const partes = f.split("/repository/");
+              -   if (partes.length <= 1) return false;
+              -   const pathParts = partes[1].split('/', 1);
+              -   const path = partes[1].substring(pathParts[0].length + 1);
+              -   return /\.(jpg|jpeg|png|gif|webp|svg|bmp)$/i.test(path);
+              - })
+              
+              if hasImages
+                h4.w3-text-dark-grey Imagens 
+                .image-container.w3-row 
+                  each ficheiro in item.ficheiros
+                    - const partes = ficheiro.split("/repository/")
+                    if partes.length > 1
+                      - const pathParts = partes[1].split('/', 1)
+                      - const id = pathParts[0]
+                      - const path = partes[1].substring(id.length + 1)
+                      - const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp)$/i.test(path)
+                      if isImage
+                        img.w3-image(style="max-width:300px;margin:5px", src=`http://localhost:3333/api/files/public/${id}/${encodeURIComponent(path)}`, alt="Imagem")
+                
+              - const anexos = item.ficheiros.filter(f => {
+              -   const partes = f.split("/repository/");
+              -   if (partes.length <= 1) return false;
+              -   const pathParts = partes[1].split('/', 1);
+              -   const id = pathParts[0];
+              -   const path = partes[1].substring(id.length + 1);
+              -   return !/\.(jpg|jpeg|png|gif|webp|svg|bmp)$/i.test(path);
+              - })
+              
+              if anexos.length > 0
+                h4.w3-text-dark-grey Anexos
+                .anexos-container.w3-row
+                  each ficheiro in anexos
+                    - const partes = ficheiro.split("/repository/")
+                    if partes.length > 1
+                      - const pathParts = partes[1].split('/', 1)
+                      - const id = pathParts[0]
+                      - const path = partes[1].substring(id.length + 1)
+                      - const fileName = path.split('/').pop()
+                      - const fileExtension = fileName.split('.').pop().toLowerCase()
+                      
+                      // Determina o ícone com base na extensão
+                      - let fileIcon = 'fa-file-o'
+              
+                      .w3-col.s12.m6.l4.w3-padding
+                        a.w3-button.w3-light-grey.w3-round.w3-block(
+                          href=`http://localhost:3333/api/files/public/${id}/${encodeURIComponent(path)}` 
+                          target="_blank" 
+                          download=fileName
+                        )
+                          i.fa(class=fileIcon)
+                          |  #{fileName}
+
+            .w3-section(style="padding: 10px 0; border-top: 1px solid #f1f1f1; display: flex; align-items: center; gap: 15px;")
+              span.w3-text-grey.w3-small
+                i.fa.fa-heart.w3-margin-right
+                span.like-count(data-item-id=item._id)= item.total_likes || 0
+                |  likes
+              
+              if username
+                form(action=`/item/${item._id}/like`, method="POST", style="display: inline;")
+                  button.w3-button.w3-round.w3-small(
+                    type="submit"
+                    style="padding: 6px 12px; border: none;"
+                    class=item.hasLiked ? 'w3-red' : 'w3-light-grey w3-text-grey'
+                  )
+                    i.fa(class=item.hasLiked ? 'fa-heart' : 'fa-heart-o', style="margin-right: 5px;")
+                    | #{item.hasLiked ? 'Liked' : 'Like'}
+              else
+                a.w3-button.w3-light-grey.w3-round.w3-small(
+                  href="/login"
+                  style="padding: 6px 12px;"
+                )
+                  i.fa.fa-heart-o(style="margin-right: 5px;")
+                  | Like
+
+            // NOVA SECÇÃO: Partilha nas redes sociais
+            .w3-section(style="padding: 10px 0; border-top: 1px solid #f1f1f1;")
+              h5.w3-text-green(style="margin: 0 0 10px 0;")
+                i.fa.fa-share-alt.w3-margin-right
+                | Partilhar
+              
+              .w3-bar
+                // Botão Twitter
+                a.w3-bar-item.w3-button.w3-blue.w3-round.w3-margin-right.w3-small(
+                  href=`https://twitter.com/intent/tweet?text=${encodeURIComponent('🎓 Confira este item: ' + item.titulo)}&url=${encodeURIComponent('http://localhost:3000/item/' + item._id)}&hashtags=engweb2025,universidade`
+                  target="_blank"
+                  rel="noopener"
+                  style="padding: 8px 12px;"
+                )
+                  i.fa.fa-twitter.w3-margin-right
+                  | Twitter
+                
+                // Botão Facebook (bonus)
+                a.w3-bar-item.w3-button.w3-indigo.w3-round.w3-margin-right.w3-small(
+                  href=`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('http://localhost:3000/item/' + item._id)}`
+                  target="_blank"
+                  rel="noopener"
+                  style="padding: 8px 12px;"
+                )
+                  i.fa.fa-facebook.w3-margin-right
+                  | Facebook
+
+                button.w3-button.w3-grey.w3-round.w3-small(
+                  onclick=`copyToClipboard('http://localhost:3000/item/${item._id}')`
+                  style="padding: 8px 12px; margin-left: 10px;"
+                )
+                  i.fa.fa-copy.w3-margin-right
+                  | Copiar Link
+
+        else 
+          p Item não encontrado ou você não tem permissão para visualizá-lo.
+
+        
+
+
+      if item
+        .w3-card.w3-padding.w3-round-large.w3-margin-top
+          h4.w3-text-dark-grey
+            i.fa.fa-comments
+            |  Comentários
+          
+          if username
+            .comment-form.w3-margin-bottom
+              form(action="/comment", method="POST")
+                input(type="hidden", name="item_id", value=item._id)
+                .w3-row
+                  .w3-col.m11.s9
+                    textarea.w3-input.w3-border.w3-round(name="descricao", placeholder="Adicione um comentário...", required style="resize:none;min-height:60px")
+                  .w3-col.m1.s3
+                    button.w3-button.w3-green.w3-round.w3-block(type="submit" style="height:60px")
+                      i.fa.fa-paper-plane
+          else
+            p.w3-text-grey.w3-small.w3-margin-bottom
+              a.w3-text-blue(href="/login") Iniciar sessão 
+              | para comentar.
+
+          #commentsList.comments-list.w3-margin-top
+            if comments && comments.length > 0
+              each comment in comments
+                .w3-card.w3-round.w3-padding.w3-light-grey.w3-margin-bottom
+                  .comment-header(style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;")
+                    p.w3-text-grey.w3-small(style="margin:0") 
+                      a.w3-text-blue(href=`/profile/${comment.user_id}`) @#{comment.user_id}
+                      |  • #{formatTimeAgo(comment.dataSubmissao)}
+                    
+                    // Botão de eliminar (só para o dono do comentário)
+                    if username && username === comment.user_id
+                      form(action=`/delete-comment/${comment._id}`, method="post", style="margin: 0; display: inline-block;", onsubmit="return confirm('Tem a certeza que deseja eliminar este comentário?')")
+                        input(type="hidden", name="item_id", value=item._id)
+                        button.w3-button.w3-red.w3-tiny.w3-round(type="submit", style="padding: 2px 6px; font-size: 10px;")
+                          i.fa.fa-trash
+          
+                  p(style="word-break: break-word; white-space: pre-line;")= comment.descricao
+            else
+              p.w3-text-grey.w3-center Ainda não há comentários.
+
+  script.
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+      }).catch(err => {
+        console.error('Erro:', err);
+        prompt('Copie este link:', text);
+      });
+    }

@@ -1,0 +1,66 @@
+extends layout
+
+block content
+  .w3-bar.w3-green.w3-padding.w3-flex-between.w3-top(style="display:flex;align-items:center;justify-content:space-between;")
+
+    a.button.w3-button.w3-white.w3-round(href="/") 
+      i.fa.fa-home
+      |   #[strong Página Inicial]
+
+    .w3-bar-item(style="flex:1;display:flex;justify-content:center;")
+      form.w3-container(action="/search", method="GET", style="display:flex;gap:8px;")
+        input.w3-input.w3-border.w3-round(type="text", name="q", placeholder="Pesquisar utilizador", style="width:300px;" required)
+        button.w3-button.w3-white.w3-round(type="submit") Pesquisar
+
+
+  .w3-container(style="margin-top:90px")
+    .w3-card.w3-round-large.w3-padding.w3-center(style="max-width:500px; margin:0 auto;")
+      h2.w3-text-dark-grey 
+        i.fa.fa-user-plus.w3-margin-right
+        | Criar Conta
+
+      if error
+        .w3-panel.w3-red.w3-round
+          p= error
+
+      form.w3-margin-top(action="/register" method="POST")
+        .w3-row.w3-section
+          .w3-col(style="width:50px")
+            i.w3-xlarge.fa.fa-user(style="margin-top: 8px;")
+          .w3-rest
+            input.w3-input.w3-border.w3-round(type="text" name="username" placeholder="Nome de utilizador" required)
+        
+        .w3-row.w3-section
+          .w3-col(style="width:50px")
+            i.w3-xlarge.fa.fa-id-card(style="margin-top: 8px;")
+          .w3-rest
+            input.w3-input.w3-border.w3-round(type="text" name="r_name" placeholder="Nome completo" required)
+        
+        .w3-row.w3-section
+          .w3-col(style="width:50px")
+            i.w3-xlarge.fa.fa-envelope(style="margin-top: 8px;")
+          .w3-rest
+            input.w3-input.w3-border.w3-round(type="email" name="email" placeholder="Email" required)
+        
+        .w3-row.w3-section
+          .w3-col(style="width:50px")
+            i.w3-xlarge.fa.fa-lock(style="margin-top: 8px;")
+          .w3-rest
+            input.w3-input.w3-border.w3-round(type="password" name="password" placeholder="Senha" required)
+
+        .w3-row.w3-section
+          .w3-col(style="width:50px;")
+            i.w3-xlarge.fa.fa-lock(style="margin-top: 8px;")
+          .w3-rest
+            input.w3-input.w3-border.w3-round(type="password" name="confirmPassword" placeholder="Confirmar senha" required)
+                
+        button.w3-button.w3-block.w3-green.w3-section.w3-padding.w3-round-large(type="submit")
+          i.fa.fa-user-plus.w3-margin-right
+          | Registar
+
+    .w3-card.w3-round-large.w3-padding.w3-margin-top.w3-center(style="max-width: 500px;margin: 32px auto 0 auto;")
+      p.w3-text-black
+        | Já tem uma conta? 
+        a.w3-button.w3-text-blue.w3-round(href="/login")
+          i.fa.fa-sign-in.w3-margin-right
+          | Iniciar sessão

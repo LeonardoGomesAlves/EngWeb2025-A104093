@@ -1,0 +1,101 @@
+extends ../layout
+
+block content
+  .w3-bar.w3-green.w3-padding.w3-top(style="display:flex;align-items:center;")
+    // Botões à esquerda
+    .w3-bar-left(style="display:flex;gap:10px;flex:1;")
+      a.w3-button.w3-white.w3-round(href="/") 
+        i.fa.fa-home
+        |  Página Inicial
+      
+      a.w3-button.w3-white.w3-round(href="/admin") 
+        i.fa.fa-arrow-left
+        |  Dashboard
+    
+    // Título no centro
+    .w3-bar-center(style="flex:1;text-align:center;")
+      h3(style="margin:0;") Gestão de Recursos
+    
+    // Logout à direita
+    .w3-bar-right(style="flex:1;text-align:right;")
+      form(action="/logout", method="post", style="display:inline;")
+        button.w3-button.w3-white.w3-round(type="submit") 
+          | Terminar Sessão 
+          i.fa.fa-sign-out
+
+  .w3-container(style="margin-top:90px")
+    
+    // Mensagens de feedback
+    if success === 'item_updated'
+      .w3-panel.w3-green.w3-round
+        p Recurso atualizado com sucesso!
+    else if success === 'item_deleted'
+      .w3-panel.w3-green.w3-round
+        p Recurso eliminado com sucesso!
+    else if error === 'delete_failed'
+      .w3-panel.w3-red.w3-round
+        p Erro ao eliminar recurso!
+    else if error === 'export_failed'
+      .w3-panel.w3-red.w3-round
+        p Erro ao exportar recurso!
+
+    .w3-card.w3-padding.w3-round-large
+      .w3-container.w3-padding
+        .w3-row.w3-margin-bottom
+          .w3-col.s6
+            h2 Itens públicos
+          .w3-col.s6.w3-right-align
+            p.w3-text-grey Total: #{items ? items.length : 0} recursos
+
+        if items && items.length > 0
+          .w3-responsive
+            table.w3-table-all.w3-hoverable
+              thead
+                tr.w3-green
+                  th ID
+                  th Título
+                  th Tipo
+                  th Autor
+                  th Data de Submissão
+                  th Ações
+              tbody
+                each item in items
+                  tr
+                    td= item._id
+                    td= item.titulo
+                    td
+                      span.w3-tag.w3-blue= item.tipo
+                    td= item.user_id
+                    td= new Date(item.dataSubmissao).toLocaleDateString('pt-PT')
+                    td
+                      // Ver recurso
+                      a.w3-button.w3-green.w3-small.w3-round(
+                        href=`/item/${item._id}`, 
+                        style="margin-right: 5px;"
+                      )
+                        i.fa.fa-eye
+                      
+                      //editar
+                      a.w3-button.w3-orange.w3-small.w3-round(
+                        href=`/admin/items/${item._id}/edit`,
+                        style="margin-right: 5px;"
+                      )
+                        i.fa.fa-edit
+
+                      // Exportar recurso
+                      a.w3-button.w3-blue.w3-small.w3-round(
+                        href=`/item/${item._id}/export`,
+                        style="margin-right: 5px;"
+                      )
+                        i.fa.fa-download
+                      
+                      // Eliminar recurso
+                      form(action=`/admin/items/${item._id}/delete`, method="post", style="margin: 0; display: inline-block;", onsubmit="return confirm('Tem a certeza que deseja eliminar este item? Esta ação não pode ser desfeita.')")
+                          button.w3-button.w3-red.w3-small.w3-round(type="submit", style="font-size:11px; height:35px; margin-right: 5px;")
+                            i.fa.fa-trash
+
+                            
+                  
+        else
+          .w3-panel.w3-light-grey.w3-center
+            p Nenhum recurso encontrado.

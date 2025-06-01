@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: diario-mongodb
+    ports:
+      - "${MONGODB_PORT:-27017}:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  api:
+    build: ./app/api
+    container_name: diario-api
+    ports:
+      - "${API_PORT:-3333}:3333"
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - FACEBOOK_CLIENT_ID=${FACEBOOK_CLIENT_ID}
+      - FACEBOOK_CLIENT_SECRET=${FACEBOOK_CLIENT_SECRET}
+    volumes:
+      - api_uploads:/usr/src/app/uploads
+      - api_repository:/usr/src/app/repository
+      - api_logs:/usr/src/app/logs
+    depends_on:
+      - mongodb
+
+  interface:
+    build: ./app/interface
+    container_name: diario-interface
+    ports:
+      - "${INTERFACE_PORT:-3000}:3000"
+    environment:
+      - API_URL=http://api:3333/api/
+    volumes:
+      - interface_uploads:/usr/src/app/uploads
+    depends_on:
+      - api
+
+volumes:
+  mongodb_data:
+  api_uploads:
+  api_repository:
+  api_logs:
+  interface_uploads:

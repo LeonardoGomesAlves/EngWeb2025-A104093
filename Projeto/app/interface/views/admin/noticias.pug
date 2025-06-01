@@ -1,0 +1,101 @@
+extends ../layout
+
+block content
+  .w3-bar.w3-green.w3-padding.w3-top(style="display:flex;align-items:center;")
+    .w3-bar-left(style="display:flex;gap:10px;flex:1;")
+      a.w3-button.w3-white.w3-round(href="/") 
+        i.fa.fa-home
+        |  Página Inicial
+      
+      a.w3-button.w3-white.w3-round(href="/admin") 
+        i.fa.fa-arrow-left
+        |  Dashboard
+    
+    .w3-bar-center(style="flex:1;text-align:center;")
+      h3(style="margin:0;") Gestão de Notícias
+    
+    .w3-bar-right(style="flex:1;text-align:right;")
+      form(action="/logout", method="post", style="display:inline;")
+        button.w3-button.w3-white.w3-round(type="submit") 
+          | Logout
+          i.fa.fa-sign-out
+
+  .w3-container(style="margin-top:90px")
+    
+    // Mensagens de feedback
+    if success === 'noticia_created'
+      .w3-panel.w3-green.w3-round
+        p Notícia criada com sucesso!
+    else if success === 'noticia_updated'
+      .w3-panel.w3-green.w3-round
+        p Notícia atualizada com sucesso!
+    else if success === 'noticia_deleted'
+      .w3-panel.w3-green.w3-round
+        p Notícia eliminada com sucesso!
+    else if success === 'visibility_toggled'
+      .w3-panel.w3-green.w3-round
+        p Visibilidade alterada com sucesso!
+    else if error === 'delete_failed'
+      .w3-panel.w3-red.w3-round
+        p Erro ao eliminar notícia!
+    else if error === 'toggle_failed'
+      .w3-panel.w3-red.w3-round
+        p Erro ao alterar visibilidade!
+    else if error === 'noticia_not_found'
+      .w3-panel.w3-red.w3-round
+        p Notícia não encontrada!
+
+    .w3-card.w3-padding.w3-round-large
+      .w3-container.w3-padding
+        .w3-row.w3-margin-bottom
+          .w3-col.s6
+            h2 Notícias
+          .w3-col.s6.w3-right-align
+            p.w3-text-grey Total: #{noticias ? noticias.length : 0} noticias
+          .w3-col.s6.w3-right-align
+            a.w3-button.w3-green.w3-round(href="/admin/noticias/create")
+              i.fa.fa-plus
+              |  Criar Notícia
+
+        if noticias && noticias.length > 0
+          .w3-responsive
+            table.w3-table-all.w3-hoverable
+              thead
+                tr.w3-green
+                  th Título
+                  th Data
+                  th Autor
+                  th Visibilidade
+                  th Ações
+              tbody
+                each noticia in noticias
+                  tr
+                    td= noticia.titulo
+                    td= new Date(noticia.data).toLocaleDateString('pt-PT')
+                    td= noticia.autor
+                    td
+                      if noticia.visible
+                        span.w3-tag.w3-green Visível
+                      else
+                        span.w3-tag.w3-red Oculta
+                    td
+                      // Editar
+                      a.w3-button.w3-blue.w3-small.w3-round(
+                        href=`/admin/noticias/${noticia._id}/edit`,
+                        style="margin-right: 5px;"
+                      )
+                        i.fa.fa-edit
+                      
+                      // Toggle visibilidade
+                      form(action=`/admin/noticias/${noticia._id}/toggle`, method="POST", style="display: inline; margin-right: 5px;")
+                        button.w3-button.w3-orange.w3-small.w3-round(type="submit")
+                          i.fa(class=noticia.visible ? 'fa-eye-slash' : 'fa-eye')
+                      
+                      // Eliminar
+                      form(action=`/admin/noticias/${noticia._id}/delete`, method="POST", style="display: inline;", 
+                           onsubmit="return confirm('Tem certeza que deseja eliminar esta notícia?')")
+                        button.w3-button.w3-red.w3-small.w3-round(type="submit")
+                          i.fa.fa-trash
+        else
+          .w3-panel.w3-light-grey.w3-center
+            p Nenhuma notícia encontrada.

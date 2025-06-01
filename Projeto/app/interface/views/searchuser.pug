@@ -1,0 +1,59 @@
+extends layout
+
+block content
+  // Top bar fixa
+  .w3-bar.w3-green.w3-padding.w3-flex-between.w3-top(style="display:flex;align-items:center;justify-content:space-between;")
+
+    a.button.w3-button.w3-white.w3-round(href="/") 
+      i.fa.fa-home
+      |   #[strong Página Inicial]
+
+    .w3-bar-item(style="flex:1;display:flex;justify-content:center;")
+      a.button.w3-button.w3-white.w3-round.upload-button(href="/upload")
+          i.fa.fa-upload 
+      form.w3-container(action="/search", method="GET", style="display:flex;gap:8px;")
+        input.w3-input.w3-border.w3-round(type="text", name="q", placeholder="Pesquisar utilizador", style="width:300px;" required)
+        button.w3-button.w3-white.w3-round(type="submit") Pesquisar
+    
+    if !username
+      a.w3-bar-item.w3-button.w3-white.w3-round(href="/login") Iniciar Sessão
+    else
+      form(action="/logout", method="post", style="display:inline")
+        button.w3-button.w3-white.w3-round(type="submit", style="margin-right: 10px") 
+          | Terminar Sessão 
+          i.fa.fa-sign-out
+      a.button.w3-button.w3-white.w3-round(href=`/profile/${username}`) Perfil  
+        i.fa.fa-user
+
+  // users
+  .w3-container.w3-round-large(style="margin-top:90px")
+    .w3-card.w3-padding.w3-round-large
+      if users && users.length > 0
+        ul.w3-ul.w3-hoverable#userList 
+          each user in users
+            li.w3-padding-16.user-item
+              a(href=`/profile/${user.username}`, style="text-decoration: none; color: inherit; display: block;")
+                div(style="display: flex; align-items: center; gap: 16px;")
+                  // Avatar dinâmico do utilizador
+                  if user.avatar
+                    img.w3-circle.w3-image(
+                      src=`http://localhost:3333${user.avatar}`, 
+                      style="width:48px; height:48px; object-fit: cover;",
+                      alt=`Avatar de ${user.username}`
+                    )
+                  else
+                    // Avatar padrão quando não há avatar definido
+                    .w3-circle(
+                      style="width:48px; height:48px; background: #4CAF50; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;"
+                    )
+                      i.fa.fa-user
+                  
+                  // Informações do utilizador
+                  div
+                    h4.w3-margin-bottom-0(style="margin:0")= user.name || "Nome não definido"
+                    p.w3-text-grey(style="margin:0") @#{user.username}
+                    if user.creationDate
+                      small.w3-text-grey(style="margin:0") Membro desde: #{formatTime(user.creationDate)}
+      else
+        p.w3-center.w3-text-grey Nenhum utilizador encontrado.
+

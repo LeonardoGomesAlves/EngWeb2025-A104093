@@ -1,0 +1,43 @@
+extends ../layout
+
+block content
+  .w3-bar.w3-green.w3-padding.w3-top(style="display:flex;align-items:center;")
+    .w3-bar-left(style="display:flex;gap:10px;flex:1;")
+      a.w3-button.w3-white.w3-round(href="/") 
+        i.fa.fa-home
+        |  Página Inicial
+
+    .w3-bar-center(style="flex:1;text-align:center;")
+      h3(style="margin:0;") Painel de Administração
+    
+    .w3-bar-right(style="flex:1;text-align:right;")
+      form(action="/logout", method="post", style="display:inline;")
+        button.w3-button.w3-white.w3-round(type="submit") 
+          | Terminar Sessão 
+          i.fa.fa-sign-out
+
+  .w3-container(style="margin-top:90px")
+    .w3-row
+      .w3-col.l3.m6.s12.w3-padding
+        .w3-card.w3-blue.w3-padding.w3-center
+          h2 Utilizadores
+          h4 &nbsp;
+          a.w3-button.w3-white.w3-round(href="/admin/users") Gerir utilizadores
+
+      .w3-col.l3.m6.s12.w3-padding
+        .w3-card.w3-green.w3-padding.w3-center
+          h2 Itens/Recursos
+          h4 &nbsp;
+          a.w3-button.w3-white.w3-round(href="/admin/items") Gerir itens
+
+      .w3-col.l3.m6.s12.w3-padding
+        .w3-card.w3-purple.w3-padding.w3-center
+          h2 Notícias
+          h4 &nbsp;
+          a.w3-button.w3-white.w3-round(href="/admin/noticias") Gerir notícias
+
+      .w3-col.l3.m6.s12.w3-padding
+        .w3-card.w3-red.w3-padding.w3-center
+          h2 Estatísticas
+          h4 &nbsp;
+          a.w3-button.w3-white.w3-round(href="/admin/stats") Ver estatísticas

@@ -1,0 +1,193 @@
+extends layout
+
+block content
+  // Top bar fixa
+  .w3-bar.w3-green.w3-padding.w3-flex-between.w3-top(style="display:flex;align-items:center;justify-content:space-between;")
+
+    a.button.w3-button.w3-white.w3-round(href="/") 
+      i.fa.fa-home
+      |   #[strong Página Inicial]
+
+    .w3-bar-item(style="flex:1;display:flex;justify-content:center;")
+      a.button.w3-button.w3-white.w3-round.upload-button(href="/upload")
+          i.fa.fa-upload 
+      form.w3-container(action="/search", method="GET", style="display:flex;gap:8px;")
+        input.w3-input.w3-border.w3-round(type="text", name="q", placeholder="Pesquisar utilizador", style="width:300px;" required)
+        button.w3-button.w3-white.w3-round(type="submit") Pesquisar
+    
+    if !iniciado
+      a.w3-bar-item.w3-button.w3-white.w3-round(href="/login") Iniciar Sessão
+    else
+      form(action="/logout", method="post", style="display:inline")
+        button.w3-button.w3-white.w3-round(type="submit", style="margin-right: 10px") 
+          | Terminar Sessão 
+          i.fa.fa-sign-out
+      a.button.w3-button.w3-white.w3-round(href=`/profile/${username}`) Perfil  
+        i.fa.fa-user
+        
+
+
+  // layout em grid: esquerda e direita
+  .w3-container(style="margin-top:90px")
+    .content-grid(style="display: grid; grid-template-columns: 1fr 3fr 1fr; gap: 30px;")
+      
+      // perfil
+      .div1
+        .w3-card.w3-padding.w3-round-large
+          if user_info
+            h3.w3-center.w3-text-green
+              i.fa.fa-user-circle.w3-margin-right
+              | Perfil de Utilizador
+            
+            .w3-container.w3-padding
+              .w3-center.w3-margin-bottom
+                if user_info.avatar
+                  img.w3-circle(
+                    src=`http://localhost:3333${user_info.avatar}`, 
+                    style="width:100px; height:100px; object-fit: cover;"
+                  )
+                else
+                  img.w3-circle(
+                    src="/images/default-avatar.png", 
+                    style="width:100px;height:100px;"
+                  )
+              
+              if is_own_profile
+                br
+                form(action="/upload-avatar", method="post", enctype="multipart/form-data", style="margin-top: 10px;")
+                  input(type="file", name="avatar", accept="image/*", required)
+                  br
+                  br
+                  button.w3-button.w3-green.w3-round(type="submit") Atualizar Avatar
+              
+              h4.w3-text-dark-grey
+                strong Nome: 
+                | #{user_info.name || "Nome não definido"}
+              
+              h4.w3-text-dark-grey
+                strong Username: 
+                | @#{user_info.username}
+              
+              h4.w3-text-dark-grey
+                strong Membro desde: 
+                | #{formatTime(user_info.creationDate)}
+              
+              if is_own_profile
+                .w3-container.w3-center.w3-margin-top
+                  a.w3-button.w3-green.w3-round-large(href="/edit-profile") 
+                    i.fa.fa-edit.w3-margin-right
+                    | Editar Perfil
+
+          else
+            p.w3-text-gray.w3-center Informação de perfil não disponível
+
+
+      // feed
+      .div2
+        .w3-card.w3-padding.w3-round-large    
+          if items && items.length > 0
+            ul.w3-ul.w3-hoverable#feedItems
+              each item in items 
+                - const itemTipo = item.tipo && item.tipo.toLowerCase() || ''
+                li.w3-padding-16.feed-item(data-tipo=itemTipo data-classificadores=(item.classificadores ? item.classificadores.join(',').toLowerCase() : '') data-href=`/item/${item._id}`) 
+                  div(style="display: flex; justify-content: space-between; align-items: flex-start;")
+                    h3= item.titulo
+                  
+                  p.w3-text-gray.w3-medium(style="margin: 0px;") Submetido por @#{item.user_id} • #{formatTimeAgo(item.dataSubmissao)} 
+                  - const desc = item.descricao.length > 100 ? item.descricao.substring(0, 100) + '...' : item.descricao
+                  p.w3-text-gray.w3-medium(style="margin: 0px; word-break: break-word; white-space: pre-line;")= desc
+
+                  .w3-section.w3-margin-top(style="margin-bottom: 15px")
+                    if item.tipo || (item.classificadores && item.classificadores.length > 0)
+                      .tag-container(style="display: flex; flex-wrap: wrap; align-items: center;")
+                        if item.tipo
+                          .tag-item.w3-margin-right(style="display: flex; align-items: center;")
+                            span.w3-text-green(style="display: inline-flex; align-items: center;")
+                              i.fa.fa-tag.w3-margin-right
+                              | #{item.tipo}
+                        
+                        if item.tipo && item.classificadores && item.classificadores.length > 0
+                          span.w3-text-grey.w3-margin-right |
+                        
+                        if item.classificadores && item.classificadores.length > 0
+                          .tag-item(style="display: flex; align-items: center;")
+                            span.w3-text-blue(style="display: inline-flex; align-items: center;")
+                              i.fa.fa-bookmark.fa-xs.w3-margin-right
+                              | #{item.classificadores.join(', ')}
+
+                  // Continuar com o código das imagens
+                  if item.ficheiros && item.ficheiros.length > 0
+                    - let imageCount = 0
+                    - const maxImages = 2
+                    each ficheiro, index in item.ficheiros
+                      - const partes = ficheiro.split("/repository/")
+                      if partes.length > 1
+                        - const pathParts = partes[1].split('/', 1)
+                        - const id = pathParts[0]
+                        - const path = partes[1].substring(id.length + 1)
+                        - const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp)$/i.test(path)
+                        if isImage
+                          if imageCount < maxImages
+                            img.w3-image(style="max-width:300px;margin:5px", src=`http://localhost:3333/api/files/public/${id}/${encodeURIComponent(path)}`, alt="Imagem", loading="lazy")
+                            - imageCount++
+                          else
+                            a.w3-button.w3-blue.w3-small.w3-round(href=`#`) 
+                              i.fa.fa-file-image-o
+                              |  Ver todas
+                            - imageCount++
+
+                  .w3-row(style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;")
+                    .w3-col(style="display: flex; align-items: center;")
+                      // Mostrar número de likes
+                      span.w3-text-grey.w3-small(style="margin-right: 15px;")
+                        i.fa.fa-heart.w3-margin-right
+                        span.like-count(data-item-id=item._id)= item.total_likes || 0
+                        |  likes
+          else 
+            p Este utilizador não tem items para mostrar
+
+      // filtro
+      .div3
+        .w3-card.w3-padding.w3-round-large
+          h3.w3-text-grey(style="margin-top:10px")
+            i.fa.fa-filter
+            |  Filtros
+
+          form(action=`/profile/${user_info.username}`, method="GET")
+            // tipos
+            .w3-container.w3-padding-small(style="margin:10px 0")
+              button.w3-button.w3-light-grey.w3-block(type="button" onclick="toggleTipo()" style="text-align:left; background-color:#f1f1f1; padding:12px;")
+                | Tipos
+                i.fa.fa-arrow-down.w3-right#tipoArrow
+            
+            #tipo-section.w3-container.w3-padding-small(style="padding-left:20px; display:none;")
+              if typeof tipos !== 'undefined'
+                each tipo in tipos
+                  .w3-row(style="margin:16px 0")
+                    label.w3-text-dark-grey(style="display:flex; align-items:center")
+                      input.w3-check.tipo-checkbox(type="checkbox", name="tipo", value=tipo, style="margin-right:10px;", checked=(Array.isArray(query.tipo) ? query.tipo.includes(tipo) : query.tipo === tipo))
+                      span(style="margin-top: 8px;") #{tipo}
+
+            // classificadores
+            .w3-container.w3-padding-small(style="margin:10px 0;")
+              button.w3-button.w3-light-grey.w3-block(type="button" onclick="toggleClassificadores()" style="text-align:left; background-color:#f1f1f1; padding:12px;")
+                | Classificadores
+                i.fa.fa-arrow-down.w3-right#classificadoresArrow
+
+            #classificadores-section.w3-container.w3-padding-small(style="padding-left:20px;display:none;")
+              if typeof classificadores !== 'undefined'
+                each classificador in classificadores
+                  .w3-row(style="margin:16px 0")
+                    label.w3-text-dark-grey(style="display: flex; align-items: center")
+                      input.w3-check.classificador-checkbox(type="checkbox", name="classificador", value=classificador, style="margin-right:10px; vertical-align: middle", checked=(Array.isArray(query.classificador) ? query.classificador.includes(classificador) : query.classificador === classificador))
+                      span(style="margin-top: 8px;") #{classificador}
+
+
+            form(action=`/profile/${user_info.username}`, method="GET")
+              .w3-container.w3-center(style="margin-top:20px; display: flex; justify-content: space-evenly;")
+                button.w3-button.w3-red.w3-round-large#clearFiltersBtn(type="submit" data-username=user_info.username style="padding:8px 16px; margin-left:10px") 
+                  i.fa.fa-trash
+                  |  Limpar filtros
+                button.w3-button.w3-blue.w3-round-large(type="submit" style="padding:8px 16px; margin-left:4px")
+                  i.fa.fa-filter
+                  |  Filtrar

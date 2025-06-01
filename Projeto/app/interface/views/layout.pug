@@ -1,0 +1,50 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel="stylesheet", href='/stylesheets/font-awesome.css')
+    link(rel="stylesheet", href='/stylesheets/font-awesome.min.css')
+    link(rel='stylesheet', href='/stylesheets/jquery.modal.css')
+    script(src='/javascripts/jquery-3.7.1.min.js')
+    script(src='/javascripts/jquery.modal.min.js')
+    script(src="/javascripts/modal.js")
+    script(src="/javascripts/filters.js")
+  body
+    block content
+    
+    #uploadModal.w3-modal
+      .w3-modal-content.w3-card-4.w3-animate-zoom(style="max-width:700px;")
+        // header
+        .w3-container.w3-green
+          .w3-button.w3-display-topright.w3-large(onclick="document.getElementById('uploadModal').style.display='none'") X 
+          h2
+            i.fa.fa-upload.w3-margin-right
+            | Adicionar novo conteúdo
+
+        // conteudo
+        .w3-container.w3-white
+          .w3-row
+            // sip
+            .w3-half(style="padding: 10px; border-right: 1px solid #eee;")
+              h3.w3-center 
+                i.fa.fa-file-archive-o.w3-margin-right
+                | Upload SIP
+              p.w3-center Carregue um arquivo ZIP contendo um pacote SIP.
+              .w3-center.w3-margin-top
+                form.w3-container#sipForm(action="/upload-sip" method="post" enctype="multipart/form-data")
+                  input.w3-input.w3-border.w3-round(type="file" name="sip" accept=".zip" style="margin-bottom: 15px;")
+                  button.w3-button.w3-green.w3-round-large(type="submit") 
+                    i.fa.fa-upload.w3-margin-right
+                    | Enviar SIP
+
+            // formulario
+            .w3-half(style="padding: 10px; border-left: 1px solid #eee;")
+              h3.w3-center 
+                i.fa.fa-plus-circle.w3-margin-right
+                | Novo Item
+              p.w3-center Crie um novo item manualmente preenchendo o formulário.
+              .w3-center.w3-margin-top
+                a.w3-button.w3-blue.w3-round-large(href="/upload") 
+                  i.fa.fa-edit.w3-margin-right
+                  | Criar Novo
